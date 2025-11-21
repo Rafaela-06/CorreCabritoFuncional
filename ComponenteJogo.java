@@ -39,22 +39,44 @@ public class ComponenteJogo extends JPanel{
         return circulos[indice];
     }
 
-    public void setCarcara(Carcara c){
-        this.carcara = c;
-        if(c != null && c.getPosicao() == -1){
-            c.posicaoAleatoria(getPosicoes());
+    public void setCarcara(Carcara c) {
+
+        this.carcara = c; // Armazena a referência do objeto Carcara
+
+        // Verifica se o objeto carcara que esta sendo atribuido não é nulo e Verifica
+        // se o carcará ainda não tem uma posição
+        if (c != null && c.getPosicao() == -1) {
+            int pos;
+
+            // Cria uma nova instância da classe Random para gerar números aleatórios.
+            java.util.Random random = new java.util.Random();
+            // Um loop que garante que o carcara não vai escolher a mesma posição do cabrito
+            do {
+                pos = random.nextInt(getPosicoes());
+            } while (cabrito != null && cabrito.getPosicao() == pos);
+            c.setPosicao(pos);
         }
+        // Método que solicita que o carcara seja redesenhado
         repaint();
     }
 
-    public void setCabrito(Cabrito c){
-        this.cabrito = c;
-        if(c != null && c.getPosicao() == -1){
-            c.posicaoAleatoria(getPosicoes());
+    public void setCabrito(Cabrito c) {
+        this.cabrito = c; // Armazena a referência do objeto Cabrito
+
+        // Verifica se o objeto cabrito que esta sendo atribuido não é nulo e Verifica
+        // se o cabrito ainda não tem uma posição
+        if (c != null && c.getPosicao() == -1) {
+            int pos;
+            java.util.Random random = new java.util.Random();
+            // Um loop que garante que o cabrito não vai escolher a mesma posição do carcara
+            do {
+                pos = random.nextInt(getPosicoes());
+            } while (carcara != null && carcara.getPosicao() == pos);
+            c.setPosicao(pos);
         }
+        // Método que solicita que o cabrito seja redesenhado
         repaint();
     }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

@@ -22,6 +22,10 @@ public class Carcara {
     public int getPosicao(){
         return posicao;
     }
+    
+    public void setPosicao(int pos) {
+        this.posicao = pos;
+    }
 
     public void desenhar(Graphics2D g2, int centroX, int centroY, int tamanho){
         if(image != null){

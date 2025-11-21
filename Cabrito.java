@@ -23,6 +23,10 @@ public class Cabrito {
         return posicao;
     }
 
+    public void setPosicao(int pos) {
+        this.posicao = pos;
+    }
+    
     public void desenhar(Graphics2D g2, int centroX, int centroY, int tamanho){
         if(image != null){
             int imgL = (int) (tamanho * 0.8); //determina a largura que deve ser a imagem
