@@ -4,9 +4,11 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+// mouse handling moved to `ComponenteJogo`
 
 public class InterfaceJogo extends JFrame{
-    private ComponenteJogo percurso = new ComponenteJogo();
+    private Jogo jogo = new Jogo();
+    private ComponenteJogo percurso = new ComponenteJogo(jogo);
     private String carcaraImage = "carcara.png";
     private String cabritoImage = "cabrito.png";
 
@@ -27,17 +29,21 @@ public class InterfaceJogo extends JFrame{
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
         add(percurso, gbc);
 
-        // cria personagens e posiciona aleatoriamente
-        Carcara carcara = new Carcara(carcaraImage);
-        Cabrito cabrito = new Cabrito(cabritoImage);
-        percurso.setCarcara(carcara);
-        percurso.setCabrito(cabrito);
+        // cria personagens e posiciona aleatoriamente via modelo Jogo
+        jogo.setCarcara(new Carcara(carcaraImage));
+        jogo.setCabrito(new Cabrito(cabritoImage));
+
+        // Mouse handling moved into ComponenteJogo so clicks are transformed by offset
 
         configurarMenu();
 
+        pack();
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -51,12 +57,11 @@ public class InterfaceJogo extends JFrame{
         botaoReiniciar.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                // recria personagens e posiciona aleatoriamente
-                Carcara newCarcara = new Carcara(carcaraImage);
-                Cabrito newCabrito = new Cabrito(cabritoImage);
-                percurso.setCarcara(newCarcara);
-                percurso.setCabrito(newCabrito);
-                percurso.repaint();
+                    // reinicia o estado do jogo (personagens e contadores)
+                        jogo.resetGame();
+                        jogo.setCarcara(new Carcara(carcaraImage));
+                        jogo.setCabrito(new Cabrito(cabritoImage));
+                        percurso.repaint();
             }
         });
 
