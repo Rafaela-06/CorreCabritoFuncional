@@ -1,6 +1,8 @@
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ComponenteJogo extends JPanel{
 
@@ -24,10 +26,78 @@ public class ComponenteJogo extends JPanel{
 
     private Carcara carcara;
     private Cabrito cabrito;
+    private Personagem selecionado = null;
 
     public ComponenteJogo(){
         setOpaque(false); // permite ver o fundo do JFrame
         setPreferredSize(new Dimension(500, 400));
+
+        // listener para cliques: detecta clique em círculo ou personagem
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+
+                // descobrir em qual círculo (se houver) o clique ocorreu
+                int clickedIndex = -1;
+                for (int i = 0; i < circulos.length; i++) {
+                    int cx = circulos[i][0] + circulos[i][2] / 2;
+                    int cy = circulos[i][1] + circulos[i][2] / 2;
+                    int r = circulos[i][2] / 2;
+                    int dx = x - cx;
+                    int dy = y - cy;
+                    if (dx*dx + dy*dy <= r*r) {
+                        clickedIndex = i;
+                        break;
+                    }
+                }
+
+                if (clickedIndex == -1) return; // clique fora de qualquer círculo
+
+                // se clicou em cima do cabrito
+                if (cabrito != null && cabrito.getPosicao() == clickedIndex) {
+                    if (selecionado == null) {
+                        selecionado = cabrito;
+                        JOptionPane.showMessageDialog(ComponenteJogo.this, "Cabrito selecionado");
+                    } else if (selecionado == cabrito) {
+                        selecionado = null;
+                        JOptionPane.showMessageDialog(ComponenteJogo.this, "Cabrito desmarcado");
+                    } else {
+                        // mover selecionado para a posição do cabrito (troca)
+                        selecionado.setPosicao(clickedIndex);
+                        selecionado = null;
+                        repaint();
+                    }
+                    return;
+                }
+
+                // se clicou em cima do carcara
+                if (carcara != null && carcara.getPosicao() == clickedIndex) {
+                    if (selecionado == null) {
+                        selecionado = carcara;
+                        JOptionPane.showMessageDialog(ComponenteJogo.this, "Carcará selecionado");
+                    } else if (selecionado == carcara) {
+                        selecionado = null;
+                        JOptionPane.showMessageDialog(ComponenteJogo.this, "Carcará desmarcado");
+                    } else {
+                        selecionado.setPosicao(clickedIndex);
+                        selecionado = null;
+                        repaint();
+                    }
+                    return;
+                }
+
+                // clique em círculo vazio
+                if (selecionado != null) {
+                    selecionado.setPosicao(clickedIndex);
+                    selecionado = null;
+                    repaint();
+                } else {
+                    JOptionPane.showMessageDialog(ComponenteJogo.this, "Clicou no círculo " + clickedIndex);
+                }
+            }
+        });
     }
 
     public int getPosicoes(){
@@ -77,6 +147,7 @@ public class ComponenteJogo extends JPanel{
         // Método que solicita que o cabrito seja redesenhado
         repaint();
     }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

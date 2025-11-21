@@ -1,7 +1,7 @@
 import java.awt.*;
 import java.util.Random;
+import javax.swing.*;
 
-import javax.swing.ImageIcon;
 public abstract class Personagem {
     protected Image image;
     protected int posicao = -1; //começa com -1 porque não possui uma posição definida

@@ -75,7 +75,7 @@ public class InterfaceJogo extends JFrame{
         botaoVerNomes.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                String autores = "Autores:\n- Seu Nome\n- Nome do Colega";
+                String autores = "Autores:\n- Mariana Ferrao Chuquel\n- Rafaela de Menezes";
                 JOptionPane.showMessageDialog(InterfaceJogo.this, autores, "Autoria", JOptionPane.INFORMATION_MESSAGE);
             }
         });
