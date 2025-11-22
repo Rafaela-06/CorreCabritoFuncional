@@ -26,27 +26,25 @@ public class InterfaceJogo extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridBagLayout());
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        add(percurso, gbc);
+        GridBagConstraints organizadorComponentes = new GridBagConstraints();
+        organizadorComponentes.gridx = 0; //define a coluna da grade onde o componente percurso começará
+        organizadorComponentes.gridy = 0; //define a linha da grade onde o componente percurso começará
+        organizadorComponentes.fill = GridBagConstraints.BOTH; //faz o percurso preencher totalmente o espaço diponivel
+        //determinam como o espaço extra deve ser distribuído se o contêiner for redimensionado
+        organizadorComponentes.weightx = 1.0;
+        organizadorComponentes.weighty = 1.0;
+        add(percurso, organizadorComponentes);
 
         // cria personagens e posiciona aleatoriamente via modelo Jogo
         jogo.setCarcara(new Carcara(carcaraImage));
         jogo.setCabrito(new Cabrito(cabritoImage));
 
-        // Mouse handling moved into ComponenteJogo so clicks are transformed by offset
-
         configurarMenu();
-
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
+    //configura o menu de reiniciar, sair e se ver os nomes
     private void configurarMenu(){
         JMenuBar menuBar = new JMenuBar();
 
@@ -58,7 +56,7 @@ public class InterfaceJogo extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e){
                     // reinicia o estado do jogo (personagens e contadores)
-                        jogo.resetGame();
+                        jogo.resetarJogo();
                         jogo.setCarcara(new Carcara(carcaraImage));
                         jogo.setCabrito(new Cabrito(cabritoImage));
                         percurso.repaint();
