@@ -4,11 +4,11 @@ public class Jogo {
     // coordenadas e ligações (definidas aqui para uso lógico)
     private int[][] circulos = {
             { 200, 40, 70 },
-            { 80, 140, 70 },
-            { 320, 140, 70 },
-            { 140, 250, 70 },
-            { 260, 250, 70 },
-            { 200, 160, 70 }
+            { 40, 140, 70 },
+            { 360, 140, 70 },
+            { 90, 330, 70 },
+            { 310, 330, 70 },
+            { 200, 190, 70 }
     };
 
     private int[][] ligacoes = {
@@ -17,6 +17,8 @@ public class Jogo {
             { 2, 4 },
             { 3, 4 }, { 3, 5 }, { 4, 5 }
     };
+    private static final int POS_INICIAL_CARCARA = 1;
+    private static final int POS_INICIAL_CABRITO = 0;
 
     private Carcara carcara;
     private Cabrito cabrito;
@@ -25,6 +27,8 @@ public class Jogo {
 
     private int movimentosCabrito = 0;
     private int movimentosCarcara = 0;
+
+    private boolean jogoFinalizado = false;
 
     public static class ResultadoClique {
         public final boolean mudou;
@@ -77,32 +81,19 @@ public class Jogo {
         return movimentosCarcara;
     }
 
-    public void setCarcara(Carcara c) {
-        this.carcara = c;
-        if (c != null && c.getPosicao() == -1) {
-            // posiciona aleatoriamente sem colidir com cabrito
-            int pos;
-            Random r = new Random();
-            do {
-                pos = r.nextInt(circulos.length);
-            } while (cabrito != null && cabrito.getPosicao() == pos);
-            c.setPosicao(pos);
-        }
-    }
-
     public void setCabrito(Cabrito c) {
         this.cabrito = c;
-        if (c != null && c.getPosicao() == -1) {
-            int pos;
-            Random r = new Random();
-            do {
-                pos = r.nextInt(circulos.length);
-            } while (carcara != null && carcara.getPosicao() == pos);
-            c.setPosicao(pos);
-        }
+        if (c.getPosicao() == -1)
+            c.setPosicao(POS_INICIAL_CABRITO);
     }
 
-    // verifica se dois sirculos estão conectados
+    public void setCarcara(Carcara c) {
+        this.carcara = c;
+        if (c.getPosicao() == -1)
+            c.setPosicao(POS_INICIAL_CARCARA);
+    }
+
+    // verifica se dois circulos estão conectados
     private boolean estaConectado(int a, int b) {
         for (int[] l : ligacoes) {
             if ((l[0] == a && l[1] == b) || (l[0] == b && l[1] == a))
@@ -111,9 +102,24 @@ public class Jogo {
         return false;
     }
 
+    private String verificarFimDeJogo() {
+        if (carcara != null && cabrito != null &&
+                carcara.getPosicao() == cabrito.getPosicao()) {
+
+            jogoFinalizado = true;
+            int total_jogadas = movimentosCabrito + movimentosCarcara;
+            return "Cabrito capturado!\nTotal de jogadas: " + total_jogadas;
+        }
+        return null;
+    }
+
     // processa clique nas coordenadas do componente; devolve resultado com mensagem
     // e se houve mudança
-    public ResultadoClique identificadorClique(int x, int y) {
+    public ResultadoClique identificadorClique(int x, int y) throws MovimentoInvalidoException {
+        if (jogoFinalizado)
+            throw new MovimentoInvalidoException(
+                    "O jogo já terminou. Reinicie para jogar novamente.");
+
         // Converter as coordenadas do clique (x, y) em um índice
         int clicado = -1;
         for (int i = 0; i < circulos.length; i++) {
@@ -130,79 +136,133 @@ public class Jogo {
         if (clicado == -1)
             return new ResultadoClique(false, null);
 
-        // clique no cabrito
+        // Clique no cabrito
         if (cabrito != null && cabrito.getPosicao() == clicado) {
-            if (!turno.equals("cabrito"))
-                return new ResultadoClique(false, "Não é a vez do cabrito.");
-            if (selecionado == null) {
-                selecionado = cabrito;
-                return new ResultadoClique(true, "Cabrito selecionado");
+
+            if (selecionado == carcara) {
+                carcara.setPosicao(clicado);
+                cabrito.setPosicao(clicado);
+                String fim = verificarFimDeJogo();
+                cabrito.setPosicao(-1);
+                return new ResultadoClique(true, fim);
+
+            } else {
+
+                // comportamento normal de seleção do cabrito
+                if (!turno.equals("cabrito"))
+                    throw new MovimentoInvalidoException("Não é a vez do cabrito.");
+
+                if (selecionado == null) {
+                    selecionado = cabrito;
+                    return new ResultadoClique(true, "Cabrito selecionado");
+                }
+                if (selecionado == cabrito) {
+                    selecionado = null;
+                    return new ResultadoClique(true, "Cabrito desmarcado");
+                }
+                return new ResultadoClique(false, null);
             }
-            if (selecionado == cabrito) {
-                selecionado = null;
-                return new ResultadoClique(true, "Cabrito desmarcado");
-            }
-            return new ResultadoClique(false, null);
         }
 
         // clique no carcará
         if (carcara != null && carcara.getPosicao() == clicado) {
-            if (!turno.equals("carcara"))
-                return new ResultadoClique(false, "Não é a vez do carcará.");
-            if (selecionado == null) {
-                selecionado = carcara;
-                return new ResultadoClique(true, "Carcará selecionado");
+
+            if (selecionado == cabrito) {
+                carcara.setPosicao(clicado);
+                cabrito.setPosicao(clicado);
+                String fim = verificarFimDeJogo();
+                cabrito.setPosicao(-1);
+                return new ResultadoClique(true, fim);
+
+            } else {
+                if (!turno.equals("carcara"))
+                    throw new MovimentoInvalidoException("Não é a vez do carcará.");
+                if (selecionado == null) {
+                    selecionado = carcara;
+                    return new ResultadoClique(true, "Carcará selecionado");
+                }
+                if (selecionado == carcara) {
+                    selecionado = null;
+                    return new ResultadoClique(true, "Carcará desmarcado");
+                }
+                return new ResultadoClique(false, null);
             }
-            if (selecionado == carcara) {
-                selecionado = null;
-                return new ResultadoClique(true, "Carcará desmarcado");
-            }
-            return new ResultadoClique(false, null);
         }
 
-        // clique em círculo vazio -> tenta mover selecionado
+        // clique em círculo vazio - tenta mover selecionado
         if (selecionado != null) {
             int origem = selecionado.getPosicao();
             if (origem == clicado) {
                 selecionado = null;
                 return new ResultadoClique(true, null);
             }
-            // não permite mover para círculo ocupado
-            if ((cabrito != null && cabrito.getPosicao() == clicado)
-                    || (carcara != null && carcara.getPosicao() == clicado)) {
-                return new ResultadoClique(false, "Círculo ocupado.");
-            }
-            if (!estaConectado(origem, clicado))
-                return new ResultadoClique(false, "Movimento inválido: não há ligação entre os círculos.");
 
-            // executar movimento
+            // Movimento do cabrito
             if (selecionado == cabrito) {
+
+                boolean conectado = estaConectado(origem, clicado);
+
+                if (!conectado) {
+                    if (cabrito.podeSuperPulo()) {
+                        cabrito.superPulo(clicado);
+                    } else {
+                        throw new MovimentoInvalidoException(
+                                "Movimento inválido: sem ligação e super pulo já usado.");
+                    }
+                } else {
+                    cabrito.setPosicao(clicado);
+                }
+
                 movimentosCabrito++;
-            } else if (selecionado == carcara) {
-                movimentosCarcara++;
+                turno = "carcara";
+                selecionado = null;
+
+                String fim = verificarFimDeJogo();
+                if (fim != null)
+                    return new ResultadoClique(true, fim);
+
+                return new ResultadoClique(true,
+                        "Movimento realizado. Agora é a vez do carcará.");
             }
 
-            selecionado.setPosicao(clicado);
-            // alterna turno
-            if (selecionado == cabrito)
-                turno = "carcara";
-            else
+            // Movimento do carcará
+            if (selecionado == carcara) {
+
+                if (!estaConectado(origem, clicado))
+                    throw new MovimentoInvalidoException(
+                            "O carcará só pode mover para espaços adjacentes.");
+
+                carcara.setPosicao(clicado);
+                movimentosCarcara++;
                 turno = "cabrito";
-            selecionado = null;
-            return new ResultadoClique(true, "Movimento realizado. Agora é a vez do " + turno + ".");
+                selecionado = null;
+
+                String fim = verificarFimDeJogo();
+                if (fim != null)
+                    return new ResultadoClique(true, fim);
+
+                return new ResultadoClique(true,
+                        "Movimento realizado. Agora é a vez do cabrito.");
+            }
         }
 
-        return new ResultadoClique(false, "Selecione um dos personagens!");
+        throw new MovimentoInvalidoException("Selecione um personagem para mover.");
     }
-    // reinicia o jogo
+
     public void resetarJogo() {
         movimentosCabrito = 0;
         movimentosCarcara = 0;
         turno = "cabrito";
         selecionado = null;
-        if (carcara != null)
-            carcara.setPosicao(-1);
-        if (cabrito != null)
-            cabrito.setPosicao(-1);
+        jogoFinalizado = false;
+
+        if (carcara != null) {
+            carcara.setPosicao(POS_INICIAL_CARCARA);
+        }
+
+        if (cabrito != null) {
+            cabrito.reset();
+            cabrito.setPosicao(POS_INICIAL_CABRITO);
+        }
     }
 }

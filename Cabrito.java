@@ -4,8 +4,22 @@ public class Cabrito extends Personagem{
     public Cabrito(String caminhoImagem){
       super(caminhoImagem);
     }
-    public void superPulo(){
-        
+  
+    private boolean superPuloDisponivel = true;
+
+    public boolean podeSuperPulo() {
+        return superPuloDisponivel;
     }
+
+    public void superPulo(int destino) {
+        setPosicao(destino);
+        superPuloDisponivel = false;
+    }
+
+    public void reset() {
+        superPuloDisponivel = true;
+  
+    }
+
 }
 

@@ -6,5 +6,7 @@ public class Carcara extends Personagem{
     }
     public void capturarCabrito(){
         
+        
+        
     }
 }
