@@ -90,6 +90,7 @@ public class ComponenteJogo extends JPanel {
         // informações do jogo
         int carcaraPosicao = jogo.getCarcaraPos();
         int cabritoPosicao = jogo.getCabritoPos();
+
         Personagem selecionado = jogo.getSelecionado();
 
         // desenhar círculos com regras de cor
@@ -99,11 +100,12 @@ public class ComponenteJogo extends JPanel {
             int size = circulos[i][2];
 
             Color preenchimento = Color.WHITE;
+            boolean jogoFinalizado = false;
 
             if (selecionado != null) {
 
                 int posSelecionado = selecionado.getPosicao();
-                if (i == posSelecionado) {
+                if (i == posSelecionado && cabritoPosicao != -1) {
                     preenchimento = Color.YELLOW;
 
                 } else {
@@ -129,9 +131,13 @@ public class ComponenteJogo extends JPanel {
                         preenchimento = Color.WHITE;
                     }
 
+                    if (cabritoPosicao == -1) {
+                        jogoFinalizado = true;
+                        preenchimento = Color.white;
+                    }
+
                 }
             }
-           
 
             g2.setColor(preenchimento);
             g2.fillOval(x, y, size, size);

@@ -1,5 +1,3 @@
-import java.util.Random;
-
 public class Jogo {
     // coordenadas e ligações (definidas aqui para uso lógico)
     private int[][] circulos = {
@@ -22,6 +20,7 @@ public class Jogo {
 
     private Carcara carcara;
     private Cabrito cabrito;
+
     private Personagem selecionado = null;
     private String turno = "cabrito"; // sempre começa com cabrito
 

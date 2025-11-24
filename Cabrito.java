@@ -1,10 +1,11 @@
 import javax.swing.*;
 
-public class Cabrito extends Personagem{
-    public Cabrito(String caminhoImagem){
-      super(caminhoImagem);
+public class Cabrito extends Personagem {
+
+    public Cabrito(String caminhoImagem) {
+        super(caminhoImagem);
     }
-  
+
     private boolean superPuloDisponivel = true;
 
     public boolean podeSuperPulo() {
@@ -18,8 +19,7 @@ public class Cabrito extends Personagem{
 
     public void reset() {
         superPuloDisponivel = true;
-  
+
     }
 
 }
-
