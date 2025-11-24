@@ -11,6 +11,7 @@ public class InterfaceJogo extends JFrame {
     private ComponenteJogo percurso = new ComponenteJogo(jogo);
     private String carcaraImage = "carcara.png";
     private String cabritoImage = "cabrito.png";
+   
 
     public InterfaceJogo() {
         super();
@@ -39,6 +40,7 @@ public class InterfaceJogo extends JFrame {
         // cria personagens e posiciona aleatoriamente via modelo Jogo
         jogo.setCarcara(new Carcara(carcaraImage));
         jogo.setCabrito(new Cabrito(cabritoImage));
+       
 
         configurarMenu();
         pack();

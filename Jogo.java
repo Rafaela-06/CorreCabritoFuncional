@@ -29,6 +29,10 @@ public class Jogo {
 
     private boolean jogoFinalizado = false;
 
+    private CabritoAssado cabritoAssado; // personagem que aparece quando o cabrito morre
+
+    private int cabritoAssadoPosicao = -1;
+
     public static class ResultadoClique {
         public final boolean mudou;
         public final String mensagem;
@@ -37,6 +41,18 @@ public class Jogo {
             this.mudou = mudou;
             this.mensagem = mensagem;
         }
+    }
+
+    public CabritoAssado getCabritoAssado() {
+        return cabritoAssado;
+    }
+
+    public void setCabritoAssado(CabritoAssado cabritoAssado) {
+        this.cabritoAssado = cabritoAssado;
+    }
+
+    public int getCabritoAssadoPos() {
+        return cabritoAssadoPosicao;
     }
 
     public int[][] getCirculos() {
@@ -92,6 +108,30 @@ public class Jogo {
             c.setPosicao(POS_INICIAL_CARCARA);
     }
 
+    public void cabritoCapturado(boolean suicidio) {
+
+        if (cabrito == null)
+            return; // segurança
+
+        int posicaoAssado;
+
+        if (suicidio) {
+            // Cabrito vai até o Carcará → assado aparece no lugar do Carcará
+            posicaoAssado = carcara.getPosicao();
+        } else {
+            // Carcará captura o Cabrito → assado no lugar do Cabrito
+            posicaoAssado = cabrito.getPosicao();
+        }
+
+        // cria o cabrito assado
+        cabritoAssado = new CabritoAssado("cabritoAssado.png");
+        cabritoAssadoPosicao = posicaoAssado;
+
+        // remove o cabrito (morto)
+        cabrito.setPosicao(-1);
+        carcara.setPosicao(-1);
+    }
+
     // verifica se dois circulos estão conectados
     private boolean estaConectado(int a, int b) {
         for (int[] l : ligacoes) {
@@ -103,9 +143,11 @@ public class Jogo {
 
     private String verificarFimDeJogo() {
         if (carcara != null && cabrito != null &&
-                carcara.getPosicao() == cabrito.getPosicao() || cabrito.getPosicao() == -1) {
+                carcara.getPosicao() == cabrito.getPosicao() || cabrito.getPosicao() == -1 && carcara.getPosicao() == -1
+                || cabrito == null) {
 
             jogoFinalizado = true;
+
             int total_jogadas = movimentosCabrito + movimentosCarcara;
             return "Cabrito capturado!\nTotal de jogadas: " + total_jogadas;
         }
@@ -138,8 +180,9 @@ public class Jogo {
         // Clique no cabrito
         if (cabrito != null && cabrito.getPosicao() == clicado) {
             if (selecionado == carcara && estaConectado(carcara.getPosicao(), cabrito.getPosicao())) {
+
                 carcara.setPosicao(clicado); // carcara se move
-                cabrito.setPosicao(-1); // cabrito capturado
+                cabritoCapturado(false);// cabrito capturado
                 String fim = verificarFimDeJogo();
                 return new ResultadoClique(true, fim);
             } else if (selecionado == carcara) {
@@ -165,7 +208,7 @@ public class Jogo {
         // clique no carcará
         if (carcara != null && carcara.getPosicao() == clicado) {
             if (selecionado == cabrito && estaConectado(carcara.getPosicao(), cabrito.getPosicao())) {
-                cabrito.setPosicao(-1);
+                cabritoCapturado(true);// cabrito capturado
                 String fim = verificarFimDeJogo();
                 return new ResultadoClique(true, fim);
             } else {
@@ -265,5 +308,7 @@ public class Jogo {
             cabrito.reset();
             cabrito.setPosicao(POS_INICIAL_CABRITO);
         }
+        cabritoAssado = null;
+        cabritoAssadoPosicao = -1;
     }
 }

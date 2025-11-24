@@ -157,6 +157,14 @@ public class ComponenteJogo extends JPanel {
                 int cy = circulos[cabritoPosicao][1] + circulos[cabritoPosicao][2] / 2 + deslocamentoY;
                 cab.desenhar((Graphics2D) g2, cx, cy, circulos[cabritoPosicao][2]);
             }
+            // desenhar Cabrito Assado
+            CabritoAssado cabAssado = jogo.getCabritoAssado();
+            int cabAssadoPos = jogo.getCabritoAssadoPos();
+            if (cabAssado != null && cabAssadoPos >= 0) {
+                int cx = circulos[cabAssadoPos][0] + circulos[cabAssadoPos][2] / 2 + deslocamentoX;
+                int cy = circulos[cabAssadoPos][1] + circulos[cabAssadoPos][2] / 2 + deslocamentoY;
+                cabAssado.desenhar(g2, cx, cy, circulos[cabAssadoPos][2]);
+            }
 
             // desenhar contadores no topo central
             int larguraFundo = 360;
