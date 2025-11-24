@@ -156,7 +156,7 @@ public class Jogo {
 
     // processa clique nas coordenadas do componente; devolve resultado com mensagem
     // e se houve mudança
-    public ResultadoClique identificadorClique(int x, int y) throws MovimentoInvalidoException {
+    public ResultadoClique identificadorClique(int x, int y){
         if (jogoFinalizado)
             throw new MovimentoInvalidoException(
                     "O jogo já terminou. Reinicie para jogar novamente.");

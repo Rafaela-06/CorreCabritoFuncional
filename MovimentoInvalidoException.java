@@ -1,4 +1,4 @@
-public class MovimentoInvalidoException extends Exception {
+public class MovimentoInvalidoException extends RuntimeException {
     public MovimentoInvalidoException(String mensagem) {
         super(mensagem);
     }
