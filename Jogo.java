@@ -103,7 +103,7 @@ public class Jogo {
 
     private String verificarFimDeJogo() {
         if (carcara != null && cabrito != null &&
-                carcara.getPosicao() == cabrito.getPosicao()) {
+                carcara.getPosicao() == cabrito.getPosicao() || cabrito.getPosicao() == -1) {
 
             jogoFinalizado = true;
             int total_jogadas = movimentosCabrito + movimentosCarcara;
@@ -137,14 +137,13 @@ public class Jogo {
 
         // Clique no cabrito
         if (cabrito != null && cabrito.getPosicao() == clicado) {
-
-            if (selecionado == carcara) {
-                carcara.setPosicao(clicado);
-                cabrito.setPosicao(clicado);
+            if (selecionado == carcara && estaConectado(carcara.getPosicao(), cabrito.getPosicao())) {
+                carcara.setPosicao(clicado); // carcara se move
+                cabrito.setPosicao(-1); // cabrito capturado
                 String fim = verificarFimDeJogo();
-                cabrito.setPosicao(-1);
                 return new ResultadoClique(true, fim);
-
+            } else if (selecionado == carcara) {
+                throw new MovimentoInvalidoException("Cabrito não está adjacente. Ataque impossível!");
             } else {
 
                 // comportamento normal de seleção do cabrito
@@ -165,17 +164,15 @@ public class Jogo {
 
         // clique no carcará
         if (carcara != null && carcara.getPosicao() == clicado) {
-
-            if (selecionado == cabrito) {
-                carcara.setPosicao(clicado);
-                cabrito.setPosicao(clicado);
-                String fim = verificarFimDeJogo();
+            if (selecionado == cabrito && estaConectado(carcara.getPosicao(), cabrito.getPosicao())) {
                 cabrito.setPosicao(-1);
+                String fim = verificarFimDeJogo();
                 return new ResultadoClique(true, fim);
-
             } else {
-                if (!turno.equals("carcara"))
+
+                if (!turno.equals("carcara")) {
                     throw new MovimentoInvalidoException("Não é a vez do carcará.");
+                }
                 if (selecionado == null) {
                     selecionado = carcara;
                     return new ResultadoClique(true, "Carcará selecionado");
@@ -204,6 +201,11 @@ public class Jogo {
                 if (!conectado) {
                     if (cabrito.podeSuperPulo()) {
                         cabrito.superPulo(clicado);
+                        movimentosCabrito++;
+                        turno = "carcara"; // passa a vez para o carcara
+                        selecionado = null;
+                        return new ResultadoClique(true, "Super Pulo do Cabrito usado!");
+
                     } else {
                         throw new MovimentoInvalidoException(
                                 "Movimento inválido: sem ligação e super pulo já usado.");

@@ -100,7 +100,6 @@ public class ComponenteJogo extends JPanel {
             int size = circulos[i][2];
 
             Color preenchimento = Color.WHITE;
-            boolean jogoFinalizado = false;
 
             if (selecionado != null) {
 
@@ -132,7 +131,6 @@ public class ComponenteJogo extends JPanel {
                     }
 
                     if (cabritoPosicao == -1) {
-                        jogoFinalizado = true;
                         preenchimento = Color.white;
                     }
 
