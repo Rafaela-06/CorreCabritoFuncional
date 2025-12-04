@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.util.Random;
 import javax.swing.*;
 
 public abstract class Personagem {
