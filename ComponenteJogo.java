@@ -100,20 +100,34 @@ public class ComponenteJogo extends JPanel {
             int size = circulos[i].getDiametro();
 
             Color preenchimento = Color.WHITE;
-            //posição que o carcara estiver fica vermelha
-            if (carcaraPosicao == i)
+            boolean ligadoAoCarcara = false;
+            if (carcaraPosicao >= 0) {
+                for (int[] l : ligacoes)
+                    if ((l[0] == i && l[1] == carcaraPosicao) || (l[1] == i && l[0] == carcaraPosicao))
+                        ligadoAoCarcara = true;
+            }
+
+            if (!ligadoAoCarcara && i == carcaraPosicao && selecionado != null) {
                 preenchimento = Color.RED;
-            else if (cabritoPosicao == i) {
-                // se ligado ao carcara -> amarelo
-                boolean ligadoAoCarcara = false;
-                if (carcaraPosicao >= 0) {
-                    for (int[] l : ligacoes)
-                        if ((l[0] == i && l[1] == carcaraPosicao) || (l[1] == i && l[0] == carcaraPosicao))
-                            ligadoAoCarcara = true;
+
+            }
+            boolean ligadoAoCabrito = false;
+            if (cabritoPosicao >= 0) {
+                for (int[] l : ligacoes)
+                    if ((l[0] == i && l[1] == cabritoPosicao) || (l[1] == i && l[0] == cabritoPosicao))
+                        ligadoAoCabrito = true;
+            }
+            if (!ligadoAoCabrito && i == cabritoPosicao && selecionado != null) {
+                preenchimento = Color.RED;
+
+            }
+
+            if (selecionado != null) {
+                int posSelecionado = selecionado.getPosicao();
+                if (i == posSelecionado && selecionado != null) {
+                    preenchimento = Color.YELLOW;
                 }
-                preenchimento = ligadoAoCarcara ? Color.YELLOW : Color.WHITE;
-            } else if (selecionado != null) {
-                //mostra os lugares onde o personagem pode ir 
+                // mostra os lugares onde o personagem pode ir
                 int circuloOrigem = selecionado.getPosicao();
                 if (circuloOrigem >= 0) {
                     // verifica ligação circuloOrigem->i
@@ -134,42 +148,46 @@ public class ComponenteJogo extends JPanel {
             g2.drawOval(x, y, size, size);
         }
 
-            // desenhar personagens por cima do percurso
-            Carcara car = jogo.getCarcara();
-            // verifica se está aparecendo e se está numa posição válida
-            if (car != null && carcaraPosicao >= 0) {
-                int cx = circulos[carcaraPosicao].getPosicaoX() + circulos[carcaraPosicao].getDiametro() / 2 + deslocamentoX;
-                int cy = circulos[carcaraPosicao].getPosicaoY() + circulos[carcaraPosicao].getDiametro() / 2 + deslocamentoY;
-                car.desenhar((Graphics2D) g2, cx, cy, circulos[carcaraPosicao].getDiametro());
-            }
-            Cabrito cab = jogo.getCabrito();
-            if (cab != null && cabritoPosicao >= 0) {
-                int cx = circulos[cabritoPosicao].getPosicaoX() + circulos[cabritoPosicao].getDiametro() / 2 + deslocamentoX;
-                int cy = circulos[cabritoPosicao].getPosicaoY() + circulos[cabritoPosicao].getDiametro() / 2 + deslocamentoY;
-                cab.desenhar((Graphics2D) g2, cx, cy, circulos[cabritoPosicao].getDiametro());
-            }
-            // desenhar Cabrito Assado
-            CabritoAssado cabAssado = jogo.getCabritoAssado();
-            int cabAssadoPos = jogo.getCabritoAssadoPos();
-            if (cabAssado != null && cabAssadoPos >= 0) {
-                int cx = circulos[cabAssadoPos].getPosicaoX() + circulos[cabAssadoPos].getDiametro() / 2 + deslocamentoX;
-                int cy = circulos[cabAssadoPos].getPosicaoY() + circulos[cabAssadoPos].getDiametro() / 2 + deslocamentoY;
-                cabAssado.desenhar(g2, cx, cy, circulos[cabAssadoPos].getDiametro());
-            }
-
-            // desenhar contadores no topo central
-            int larguraFundo = 360;
-            int alturaFundo = 48;
-            int xFundo = (getWidth() - larguraFundo) / 2;
-            int yFundo = 8;
-            g2.setColor(new Color(0, 0, 0, 160));
-            // desenha e preenche um retângulo arredondado
-            g2.fillRoundRect(xFundo, yFundo, larguraFundo, alturaFundo, 16, 16);
-            // configuração e desenho do texto
-            g2.setColor(Color.WHITE);
-            g2.setFont(new Font("SansSerif", Font.BOLD, 14));
-            int xTexto = xFundo + 12;
-            g2.drawString("Movimentos Cabrito: " + jogo.getMovimentosCabrito(), xTexto, yFundo + 18);
-            g2.drawString("Movimentos Carcará: " + jogo.getMovimentosCarcara(), xTexto, yFundo + 36);
+        // desenhar personagens por cima do percurso
+        Carcara car = jogo.getCarcara();
+        // verifica se está aparecendo e se está numa posição válida
+        if (car != null && carcaraPosicao >= 0) {
+            int cx = circulos[carcaraPosicao].getPosicaoX() + circulos[carcaraPosicao].getDiametro() / 2
+                    + deslocamentoX;
+            int cy = circulos[carcaraPosicao].getPosicaoY() + circulos[carcaraPosicao].getDiametro() / 2
+                    + deslocamentoY;
+            car.desenhar((Graphics2D) g2, cx, cy, circulos[carcaraPosicao].getDiametro());
         }
+        Cabrito cab = jogo.getCabrito();
+        if (cab != null && cabritoPosicao >= 0) {
+            int cx = circulos[cabritoPosicao].getPosicaoX() + circulos[cabritoPosicao].getDiametro() / 2
+                    + deslocamentoX;
+            int cy = circulos[cabritoPosicao].getPosicaoY() + circulos[cabritoPosicao].getDiametro() / 2
+                    + deslocamentoY;
+            cab.desenhar((Graphics2D) g2, cx, cy, circulos[cabritoPosicao].getDiametro());
+        }
+        // desenhar Cabrito Assado
+        CabritoAssado cabAssado = jogo.getCabritoAssado();
+        int cabAssadoPos = jogo.getCabritoAssadoPos();
+        if (cabAssado != null && cabAssadoPos >= 0) {
+            int cx = circulos[cabAssadoPos].getPosicaoX() + circulos[cabAssadoPos].getDiametro() / 2 + deslocamentoX;
+            int cy = circulos[cabAssadoPos].getPosicaoY() + circulos[cabAssadoPos].getDiametro() / 2 + deslocamentoY;
+            cabAssado.desenhar(g2, cx, cy, circulos[cabAssadoPos].getDiametro());
+        }
+
+        // desenhar contadores no topo central
+        int larguraFundo = 360;
+        int alturaFundo = 48;
+        int xFundo = (getWidth() - larguraFundo) / 2;
+        int yFundo = 8;
+        g2.setColor(new Color(0, 0, 0, 160));
+        // desenha e preenche um retângulo arredondado
+        g2.fillRoundRect(xFundo, yFundo, larguraFundo, alturaFundo, 16, 16);
+        // configuração e desenho do texto
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("SansSerif", Font.BOLD, 14));
+        int xTexto = xFundo + 12;
+        g2.drawString("Movimentos Cabrito: " + jogo.getMovimentosCabrito(), xTexto, yFundo + 18);
+        g2.drawString("Movimentos Carcará: " + jogo.getMovimentosCarcara(), xTexto, yFundo + 36);
     }
+}
