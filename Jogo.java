@@ -205,11 +205,11 @@ public class Jogo {
 
                 if (selecionado == null) {
                     selecionado = cabrito;
-                    return new ResultadoClique(true, "Cabrito selecionado");
+                    return new ResultadoClique(true, null);
                 }
                 if (selecionado == cabrito) {
                     selecionado = null;
-                    return new ResultadoClique(true, "Cabrito desmarcado");
+                    return new ResultadoClique(true, null);
                 }
                 return new ResultadoClique(false, null);
             }
@@ -228,11 +228,11 @@ public class Jogo {
                 }
                 if (selecionado == null) {
                     selecionado = carcara;
-                    return new ResultadoClique(true, "Carcará selecionado");
+                    return new ResultadoClique(true, null);
                 }
                 if (selecionado == carcara) {
                     selecionado = null;
-                    return new ResultadoClique(true, "Carcará desmarcado");
+                    return new ResultadoClique(true, null);
                 }
                 return new ResultadoClique(false, null);
             }
@@ -275,8 +275,7 @@ public class Jogo {
                 if (fim != null)
                     return new ResultadoClique(true, fim);
 
-                return new ResultadoClique(true,
-                        "Movimento realizado. Agora é a vez do carcará.");
+                return new ResultadoClique(true, null);
             }
 
             // Movimento do carcará
@@ -295,8 +294,7 @@ public class Jogo {
                 if (fim != null)
                     return new ResultadoClique(true, fim);
 
-                return new ResultadoClique(true,
-                        "Movimento realizado. Agora é a vez do cabrito.");
+                return new ResultadoClique(true, null);
             }
         }
 

@@ -1,7 +1,7 @@
 public class Circulo {
     private int posicaoX;
     private int posicaoY;
-    private static int diametro = 70;
+    private final static int diametro = 70;
     public Circulo(int posicaoX, int posicaoY){
         this.posicaoX=posicaoX;
         this.posicaoY=posicaoY;
