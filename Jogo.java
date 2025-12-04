@@ -1,14 +1,22 @@
 public class Jogo {
     // coordenadas e ligações (definidas aqui para uso lógico)
-    private int[][] circulos = {
+    /*private int[][] circulos = {
             { 200, 40, 70 },
             { 40, 140, 70 },
             { 360, 140, 70 },
             { 90, 330, 70 },
             { 310, 330, 70 },
             { 200, 190, 70 }
+    };*/
+    private Circulo[] circulos={
+        new Circulo(200, 40), 
+        new Circulo(40, 140),
+        new Circulo(360, 140), 
+        new Circulo(90, 330),
+        new Circulo(310, 330),
+        new Circulo(200, 190)
     };
-
+    
     private int[][] ligacoes = {
             { 0, 1 }, { 0, 2 }, { 0, 5 },
             { 1, 3 },
@@ -55,7 +63,7 @@ public class Jogo {
         return cabritoAssadoPosicao;
     }
 
-    public int[][] getCirculos() {
+    public Circulo[] getCirculos() {
         return circulos;
     }
 
@@ -164,9 +172,11 @@ public class Jogo {
         // Converter as coordenadas do clique (x, y) em um índice
         int clicado = -1;
         for (int i = 0; i < circulos.length; i++) {
-            int centroX = circulos[i][0] + circulos[i][2] / 2;
-            int centroY = circulos[i][1] + circulos[i][2] / 2;
-            int raio = circulos[i][2] / 2;
+            int centroX= circulos[i].getPosicaoX() + circulos[i].getDiametro() / 2;
+            //int centroX = circulos[i][0] + circulos[i][2] / 2;
+            int centroY = circulos[i].getPosicaoY() + circulos[i].getDiametro() / 2;
+            //int centroY = circulos[i][1] + circulos[i][2] / 2;
+            int raio = circulos[i].getDiametro() / 2;
             int diferencaX = x - centroX;
             int diferençaY = y - centroY;
             if (diferencaX * diferencaX + diferençaY * diferençaY <= raio * raio) {
