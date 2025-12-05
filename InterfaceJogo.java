@@ -4,7 +4,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-// mouse handling moved to `ComponenteJogo`
 
 public class InterfaceJogo extends JFrame{
     private Jogo jogo = new Jogo();
@@ -84,13 +83,26 @@ public class InterfaceJogo extends JFrame{
                 JOptionPane.showMessageDialog(InterfaceJogo.this, autores, "Autoria", JOptionPane.INFORMATION_MESSAGE);
             }
         });
+        JMenu menuAjuda = new JMenu("Ajuda");
+        JMenuItem botaoComoJogar = new JMenuItem("Como Jogar?");
+        botaoComoJogar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String instrucoes = "Como Jogar:\n"
+                        + "- Clique em um personagem (Cabrito/Carcará) para selecioná-lo.\n"
+                        + "- Depois clique em um círculo conectado para mover.\n"
+                        + "- O Cabrito pode usar um superpulo uma vez para pular para qualquer círculo.\n"
+                        + "- O jogo alterna turnos entre Cabrito e Carcará.";
+                JOptionPane.showMessageDialog(InterfaceJogo.this, instrucoes, "Como Jogar", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        menuAjuda.add(botaoComoJogar);
         menuAutoria.add(botaoVerNomes);
 
         menuBar.add(menuJogo);
         menuBar.add(menuAutoria);
+        menuBar.add(menuAjuda);
 
         setJMenuBar(menuBar);
     }
-
-    // statusBar removida: mensagens são exibidas via diálogos
 }

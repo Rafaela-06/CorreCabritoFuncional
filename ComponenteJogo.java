@@ -136,49 +136,123 @@ public class ComponenteJogo extends JPanel {
             g2.setColor(Color.BLACK);
             g2.drawOval(x, y, diametro, diametro);
 
-            // desenhar personagens por cima do percurso
+                // (desenho de personagens e contadores feito após o laço)
+        }
+
+            // --- desenhar personagens por cima do percurso (uma vez) ---
             Carcara car = jogo.getCarcara();
-            // verifica se está aparecendo e se está numa posição válida
             if (car != null && carcaraPosicao >= 0) {
                 int cx = circulos[carcaraPosicao].getPosicaoX() + circulos[carcaraPosicao].getDiametro() / 2
-                        + deslocamentoX;
+                    + deslocamentoX;
                 int cy = circulos[carcaraPosicao].getPosicaoY() + circulos[carcaraPosicao].getDiametro() / 2
-                        + deslocamentoY;
+                    + deslocamentoY;
                 car.desenhar((Graphics2D) g2, cx, cy, circulos[carcaraPosicao].getDiametro());
             }
             Cabrito cab = jogo.getCabrito();
             if (cab != null && cabritoPosicao >= 0) {
                 int cx = circulos[cabritoPosicao].getPosicaoX() + circulos[cabritoPosicao].getDiametro() / 2
-                        + deslocamentoX;
+                    + deslocamentoX;
                 int cy = circulos[cabritoPosicao].getPosicaoY() + circulos[cabritoPosicao].getDiametro() / 2
-                        + deslocamentoY;
+                    + deslocamentoY;
                 cab.desenhar((Graphics2D) g2, cx, cy, circulos[cabritoPosicao].getDiametro());
             }
-            // desenhar Cabrito Assado
             CabritoAssado cabAssado = jogo.getCabritoAssado();
             int cabAssadoPos = jogo.getCabritoAssadoPos();
             if (cabAssado != null && cabAssadoPos >= 0) {
                 int cx = circulos[cabAssadoPos].getPosicaoX() + circulos[cabAssadoPos].getDiametro() / 2
-                        + deslocamentoX;
+                    + deslocamentoX;
                 int cy = circulos[cabAssadoPos].getPosicaoY() + circulos[cabAssadoPos].getDiametro() / 2
-                        + deslocamentoY;
+                    + deslocamentoY;
                 cabAssado.desenhar(g2, cx, cy, circulos[cabAssadoPos].getDiametro());
             }
 
-            // desenhar contadores no topo central
+            // desenhar contadores no topo central (fora do laço)
             int larguraFundo = 360;
             int alturaFundo = 48;
             int xFundo = (getWidth() - larguraFundo) / 2;
             int yFundo = 8;
             g2.setColor(new Color(0, 0, 0, 160));
-            // desenha e preenche um retângulo arredondado
             g2.fillRoundRect(xFundo, yFundo, larguraFundo, alturaFundo, 16, 16);
-            // configuração e desenho do texto
             g2.setColor(Color.WHITE);
             g2.setFont(new Font("SansSerif", Font.BOLD, 14));
             int xTexto = xFundo + 12;
             g2.drawString("Movimentos Cabrito: " + jogo.getMovimentosCabrito(), xTexto, yFundo + 18);
             g2.drawString("Movimentos Carcará: " + jogo.getMovimentosCarcara(), xTexto, yFundo + 36);
+
+            // desenhar legenda de cores no canto inferior direito
+            int legendaLarg = 220;
+            int legendaAlt = 110;
+            int pad = 12;
+            int xLegenda = getWidth() - legendaLarg - pad;
+            int yLegenda = getHeight() - legendaAlt - pad;
+
+            g2.setColor(new Color(0, 0, 0, 160));
+            g2.fillRoundRect(xLegenda, yLegenda, legendaLarg, legendaAlt, 12, 12);
+
+            g2.setColor(Color.WHITE);
+            g2.setFont(new Font("SansSerif", Font.PLAIN, 13));
+            int sw = 14; // square width for color sample
+            int gapY = 22;
+            int textoX = xLegenda + sw + 18;
+            int linhaY = yLegenda + 20;
+
+            // Branco: posição livre
+            g2.setColor(Color.WHITE);
+            g2.fillRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+            g2.setColor(Color.BLACK);
+            g2.drawRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+            g2.setColor(Color.WHITE);
+            g2.drawString("Branco — Posição Livre", textoX, linhaY);
+
+            // Amarelo: selecionado
+            linhaY += gapY;
+            g2.setColor(Color.YELLOW);
+            g2.fillRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+            g2.setColor(Color.BLACK);
+            g2.drawRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+            g2.setColor(Color.WHITE);
+            g2.drawString("Amarelo — Personagem Escolhido", textoX, linhaY);
+
+            // Verde: movimento disponível
+            linhaY += gapY;
+            g2.setColor(Color.GREEN);
+            g2.fillRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+            g2.setColor(Color.BLACK);
+            g2.drawRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+            g2.setColor(Color.WHITE);
+            g2.drawString("Verde — Movimento Disponível", textoX, linhaY);
+
+            // Vermelho: posição de confronto / captura
+            linhaY += gapY;
+            g2.setColor(Color.RED);
+            g2.fillRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+            g2.setColor(Color.BLACK);
+            g2.drawRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+            g2.setColor(Color.WHITE);
+            g2.drawString("Vermelho — Risco de Morrer", textoX, linhaY);
+
+            // (superpulo removido desta legenda central; exibido separadamente no canto superior direito)
+
+        // --- legenda do superpulo no canto superior direito ---
+        int padRight = 12;
+        int larguraSuper = 180;
+        int alturaSuper = 32;
+        int xSuper = getWidth() - larguraSuper - padRight;
+        int ySuper = 12; // topo
+
+        g2.setColor(new Color(0, 0, 0, 160));
+        g2.fillRoundRect(xSuper, ySuper, larguraSuper, alturaSuper, 10, 10);
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        boolean superPuloDisponivel2 = false;
+        if (jogo.getCabrito() != null) {
+            superPuloDisponivel2 = jogo.getCabrito().podeSuperPulo();
         }
+        String textoSuper2 = superPuloDisponivel2 ? "Superpulo: Disponível" : "Superpulo: Indisponível";
+        FontMetrics fm = g2.getFontMetrics();
+        int textWidth = fm.stringWidth(textoSuper2);
+        int textX = xSuper + 12;
+        int textY = ySuper + (alturaSuper + fm.getAscent()) / 2 - 4;
+        g2.drawString(textoSuper2, textX, textY);
     }
 }
