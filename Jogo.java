@@ -106,28 +106,30 @@ public class Jogo {
 
     public void setCabrito(Cabrito c) {
         this.cabrito = c;
+        //se o cabrito estiver fora do mapa, ele volta para posição inicial
         if (c.getPosicao() == -1)
             c.setPosicao(POS_INICIAL_CABRITO);
     }
 
     public void setCarcara(Carcara c) {
         this.carcara = c;
+        //se o carcara estiver fora do mapa, ele volta para posição inicial
         if (c.getPosicao() == -1)
             c.setPosicao(POS_INICIAL_CARCARA);
     }
-
+    //método para aparecer a imagem do cabrito assado quando ele é capturado
     public void cabritoCapturado(boolean suicidio) {
 
         if (cabrito == null)
-            return; // segurança
+            return;
 
         int posicaoAssado;
 
         if (suicidio) {
-            // Cabrito vai até o Carcará → assado aparece no lugar do Carcará
+            //assado aparece no lugar do Carcará
             posicaoAssado = carcara.getPosicao();
         } else {
-            // Carcará captura o Cabrito → assado no lugar do Cabrito
+            // assado no lugar do Cabrito
             posicaoAssado = cabrito.getPosicao();
         }
 
@@ -148,14 +150,14 @@ public class Jogo {
         }
         return false;
     }
-
+    //esse método vai verificar se é fim de jogo
     private String verificarFimDeJogo() {
         if (carcara != null && cabrito != null &&
                 carcara.getPosicao() == cabrito.getPosicao() || cabrito.getPosicao() == -1 && carcara.getPosicao() == -1
                 || cabrito == null) {
 
             jogoFinalizado = true;
-
+            //ele retorna o total de movimentos dos personagens 
             int total_jogadas = movimentosCabrito + movimentosCarcara;
             return "Cabrito capturado!\nTotal de jogadas: " + total_jogadas;
         }
@@ -184,6 +186,7 @@ public class Jogo {
                 break;
             }
         }
+        //garante que os personagens não saiam do mapa
         if (clicado == -1)
             return new ResultadoClique(false, null);
 
@@ -193,7 +196,6 @@ public class Jogo {
 
                 carcara.setPosicao(clicado); // carcara se move
                 cabritoCapturado(false);// cabrito capturado
-                EfeitosSonoros.tocar("Capturar.wav");
                 String fim = verificarFimDeJogo();
                 return new ResultadoClique(true, fim);
             } else if (selecionado == carcara) {
@@ -255,7 +257,6 @@ public class Jogo {
                 if (!conectado) {
                     if (cabrito.podeSuperPulo()) {
                         cabrito.superPulo(clicado);
-                        EfeitosSonoros.tocar("superPulo.wav");
                         movimentosCabrito++;
                         turno = "carcara"; // passa a vez para o carcara
                         selecionado = null;
@@ -304,12 +305,13 @@ public class Jogo {
     }
 
     public void resetarJogo() {
-        movimentosCabrito = 0;
+        movimentosCabrito = 0;//reseta o total de movimentos
         movimentosCarcara = 0;
-        turno = "cabrito";
-        selecionado = null;
+        turno = "cabrito"; //turno começa com o cabrito
+        selecionado = null; 
         jogoFinalizado = false;
 
+        //os personagens voltam pra posição inical
         if (carcara != null) {
             carcara.setPosicao(POS_INICIAL_CARCARA);
         }
@@ -318,6 +320,7 @@ public class Jogo {
             cabrito.reset();
             cabrito.setPosicao(POS_INICIAL_CABRITO);
         }
+        //remove a imagem do cabrito assado
         cabritoAssado = null;
         cabritoAssadoPosicao = -1;
     }

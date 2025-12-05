@@ -192,7 +192,7 @@ public class ComponenteJogo extends JPanel {
         // desenhar legenda de cores no canto inferior direito
         int legendaLarg = 260;
         int legendaAlt = 110;
-        int pad = 12;
+        int pad = 10;
         int xLegenda = getWidth() - legendaLarg - pad;
         int yLegenda = getHeight() - legendaAlt - pad;
 
@@ -202,17 +202,10 @@ public class ComponenteJogo extends JPanel {
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("SansSerif", Font.PLAIN, 13));
         int sw = 14; // square width for color sample
-        int gapY = 22;
-        int textoX = xLegenda + sw + 18;
+        int gapY = 20;
+        int textoX = xLegenda + sw + 15;
         int linhaY = yLegenda + 20;
 
-        // Branco: posição livre
-        g2.setColor(Color.WHITE);
-        g2.fillRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
-        g2.setColor(Color.BLACK);
-        g2.drawRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
-        g2.setColor(Color.WHITE);
-        g2.drawString("Branco — Posição Livre", textoX, linhaY);
 
         // Amarelo: selecionado
         linhaY += gapY;
