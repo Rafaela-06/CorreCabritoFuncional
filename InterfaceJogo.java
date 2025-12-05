@@ -89,10 +89,13 @@ public class InterfaceJogo extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String instrucoes = "Como Jogar:\n"
-                        + "- Clique em um personagem (Cabrito/Carcará) para selecioná-lo.\n"
-                        + "- Depois clique em um círculo conectado para mover.\n"
-                        + "- O Cabrito pode usar um superpulo uma vez para pular para qualquer círculo.\n"
-                        + "- O jogo alterna turnos entre Cabrito e Carcará.";
+                        + "- Este jogo foi criado para 2 jogadores;\n"
+                        + "- Cada jogador deve escolher entre os personagens Cabrito e Carcará,\n"
+                        + "- Para realizar o movimento de seu personagem selecione ele, avalie as cores do mapa e clique no círculo desejado;\n"
+                        + "- O Cabrito possui a habilidade de super pulo, o que o possiblitita pular para qualquer círculo no mapa,\n" 
+                        + "porém só poderá ser utilizada 1 vez;\n"
+                        + "- O Carcará possui o objetivo de capturar o Cabrito;\n"
+                        + "- O jogo termina quando o Cabrito é capturado pelo Carcará.\n";
                 JOptionPane.showMessageDialog(InterfaceJogo.this, instrucoes, "Como Jogar", JOptionPane.INFORMATION_MESSAGE);
             }
         });

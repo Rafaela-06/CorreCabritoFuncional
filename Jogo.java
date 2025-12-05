@@ -71,7 +71,7 @@ public class Jogo {
         return ligacoes;
     }
 
-    // tem que verificar esses de posição pra ver se não estão redundantes
+    // encapsula a posição armazenada e garante que não seja nula
     public int getCarcaraPos() {
         return carcara != null ? carcara.getPosicao() : -1;
     }
@@ -95,7 +95,7 @@ public class Jogo {
     public Personagem getSelecionado() {
         return selecionado;
     }
-
+    // retorna o número de movimentos de cada personagem
     public int getMovimentosCabrito() {
         return movimentosCabrito;
     }
@@ -172,14 +172,14 @@ public class Jogo {
         // Converter as coordenadas do clique (x, y) em um índice
         int clicado = -1;
         for (int i = 0; i < circulos.length; i++) {
-            int centroX= circulos[i].getPosicaoX() + circulos[i].getDiametro() / 2;
+            int centroX= circulos[i].getPosicaoX() + Circulo.DIAMETRO / 2;
             //int centroX = circulos[i][0] + circulos[i][2] / 2;
-            int centroY = circulos[i].getPosicaoY() + circulos[i].getDiametro() / 2;
+            int centroY = circulos[i].getPosicaoY() + Circulo.DIAMETRO / 2;
             //int centroY = circulos[i][1] + circulos[i][2] / 2;
-            int raio = circulos[i].getDiametro() / 2;
+            int raio = Circulo.DIAMETRO / 2;
             int diferencaX = x - centroX;
-            int diferençaY = y - centroY;
-            if (diferencaX * diferencaX + diferençaY * diferençaY <= raio * raio) {
+            int diferencaY = y - centroY;
+            if (diferencaX * diferencaX + diferencaY * diferencaY <= raio * raio) {
                 clicado = i;
                 break;
             }
@@ -193,6 +193,7 @@ public class Jogo {
 
                 carcara.setPosicao(clicado); // carcara se move
                 cabritoCapturado(false);// cabrito capturado
+                EfeitosSonoros.tocar("Capturar.wav");
                 String fim = verificarFimDeJogo();
                 return new ResultadoClique(true, fim);
             } else if (selecionado == carcara) {
@@ -254,6 +255,7 @@ public class Jogo {
                 if (!conectado) {
                     if (cabrito.podeSuperPulo()) {
                         cabrito.superPulo(clicado);
+                        EfeitosSonoros.tocar("superPulo.wav");
                         movimentosCabrito++;
                         turno = "carcara"; // passa a vez para o carcara
                         selecionado = null;
