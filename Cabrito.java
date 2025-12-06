@@ -6,7 +6,7 @@ public class Cabrito extends Personagem {
 
     private boolean superPuloDisponivel = true;
 
-    public boolean podeSuperPulo() {
+    public boolean verificarSuperPulo() {
         return superPuloDisponivel;
     }
 

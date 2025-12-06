@@ -255,7 +255,7 @@ public class Jogo {
                 boolean conectado = estaConectado(origem, clicado);
 
                 if (!conectado) {
-                    if (cabrito.podeSuperPulo()) {
+                    if (cabrito.verificarSuperPulo()) {
                         cabrito.superPulo(clicado);
                         movimentosCabrito++;
                         turno = "carcara"; // passa a vez para o carcara

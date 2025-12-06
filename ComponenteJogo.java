@@ -33,13 +33,14 @@ public class ComponenteJogo extends JPanel {
                     if (resultado.mudou) {
                         repaint();
                     }
-
+                    // verifica se existe alguma mensagem para exibir na tela
                     if (resultado.mensagem != null) {
                         Window janela = SwingUtilities.getWindowAncestor(ComponenteJogo.this);
                         JOptionPane.showMessageDialog(janela, resultado.mensagem);
                     }
 
                 } catch (MovimentoInvalidoException ex) {
+                    // se lançar a exceção MovimentoInvalidoException aparece uma janela de erro avisando
                     Window janela = SwingUtilities.getWindowAncestor(ComponenteJogo.this);
                     JOptionPane.showMessageDialog(janela, ex.getMessage(), "Movimento inválido",
                             JOptionPane.ERROR_MESSAGE);
@@ -47,18 +48,20 @@ public class ComponenteJogo extends JPanel {
             }
         });
     }
-
+    // método responsável por desenhar o todo o mapa do jogo e seus componentes
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        // desenha a imagem de fundo
         g2.drawImage(imagemFundo, 0, 0, getWidth(), getHeight(), this);
 
         // armazenam as informações dos circulos e suas ligações
         Circulo[] circulos = jogo.getCirculos();
         int[][] ligacoes = jogo.getLigacoes();
 
-        // informações do jogo
+        // recebe as posições atuais do Carcará e do Cabrito e
+        // qual personagem está selecionado
         int carcaraPosicao = jogo.getCarcaraPos();
         int cabritoPosicao = jogo.getCabritoPos();
         Personagem selecionado = jogo.getSelecionado();
@@ -69,7 +72,7 @@ public class ComponenteJogo extends JPanel {
 
         // suaviza as bordas das linha e dos circulos para melhorar a qualidade
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // defina a espessura das linhas
+        // define a espessura das linhas
         g2.setStroke(new BasicStroke(4));
 
         // calcular bounding box dos círculos para centralizar
@@ -90,10 +93,11 @@ public class ComponenteJogo extends JPanel {
         }
         int larguraTotal = maxX - minX;
         int alturaTotal = maxY - minY;
+        // calcula o valor de deslocamento para centralizar a área do jogo
         deslocamentoX = (getWidth() - larguraTotal) / 2 - minX;
         deslocamentoY = (getHeight() - alturaTotal) / 2 - minY;
 
-        // desenhar ligações
+        // desenha as ligações entre os círculos
         g2.setColor(Color.BLACK);
         for (int[] l : ligacoes) {
             int x1 = circulos[l[0]].getPosicaoX() + Circulo.DIAMETRO / 2 + deslocamentoX;
@@ -103,37 +107,46 @@ public class ComponenteJogo extends JPanel {
             g2.drawLine(x1, y1, x2, y2);
         }
 
-        // desenhar círculos com regras de cor
+        // desenha os círculos com as regras de cada cor
         for (int i = 0; i < circulos.length; i++) {
+            // cálculo para garantir que os circulos sejam desenhados no local correto
             int x = circulos[i].getPosicaoX() + deslocamentoX;
             int y = circulos[i].getPosicaoY() + deslocamentoY;
+
+            // definição do diametro e da cor de preenchimento de todos os círculos
             int diametro = Circulo.DIAMETRO;
             Color preenchimento = Color.WHITE;
 
+            // verifica se o personagem está selecionado e guarda sua posição
             if (selecionado != null) {
                 int posSelecionado = selecionado.getPosicao();
                 boolean conectado = false;
+                // define a cor de preenchimento para amarelo onde o personagem selecionado está
                 if (i == posSelecionado) {
                     preenchimento = Color.YELLOW;
                 }
                 // mostra os lugares onde o personagem pode ir
                 if (posSelecionado >= 0) {
-                    // verifica ligação circuloOrigem->i
+                    // verifica a ligação entre os círculos
                     for (int[] l : ligacoes) {
                         if ((l[0] == posSelecionado && l[1] == i) || (l[1] == posSelecionado && l[0] == i)) {
                             conectado = true;
                             break;
                         }
                     }
+                    // verifica se o círculo está ocupado por um dos personagens
                     boolean circuloOcupado = (cabritoPosicao == i) || (carcaraPosicao == i);
+                    // verifica se o circulo está conectado, se não está ocupado e preenche de verde 
                     if (conectado && !circuloOcupado)
                         preenchimento = Color.GREEN;
                     if (conectado && preenchimento != Color.YELLOW) {
-                        // Se o Cabrito foi selecionado e o Carcará está na posição adjacente i
+                        // Se o Cabrito foi selecionado e o 
+                        // Carcará está na posição adjacente preenche de vermelho
                         if (selecionado.getPosicao() == cabritoPosicao && i == carcaraPosicao) {
                             preenchimento = Color.RED;
                         }
-                        // Se o Carcará foi selecionado e o Cabrito está na posição adjacente i
+                        // Se o Carcará foi selecionado e o 
+                        // Cabrito está na posição adjacente preenche de vermelho
                         else if (selecionado.getPosicao() == carcaraPosicao && i == cabritoPosicao) {
                             preenchimento = Color.RED;
                         }
@@ -141,119 +154,130 @@ public class ComponenteJogo extends JPanel {
                 }
             }
 
-            // desenha preenchimento e contorno sempre (não apenas quando há seleção)
+            // desenha o preenchimento e contorno
             g2.setColor(preenchimento);
             g2.fillOval(x, y, diametro, diametro);
-
             g2.setColor(Color.BLACK);
             g2.drawOval(x, y, diametro, diametro);
-
-            // (desenho de personagens e contadores feito após o laço)
         }
 
-        // --- desenhar personagens por cima do percurso (uma vez) ---
+        // desenha os personagens por cima do mapa
+        // verifica se o personagem foi instanciado e se está em uma posição válida
         if (car != null && carcaraPosicao >= 0) {
-            int cx = circulos[carcaraPosicao].getPosicaoX() + Circulo.DIAMETRO / 2
+            // calcula o centro do círculo para desenhar o personagem centralizado
+            int centroX = circulos[carcaraPosicao].getPosicaoX() + Circulo.DIAMETRO / 2
                     + deslocamentoX;
-            int cy = circulos[carcaraPosicao].getPosicaoY() + Circulo.DIAMETRO / 2
+            int centroY = circulos[carcaraPosicao].getPosicaoY() + Circulo.DIAMETRO / 2
                     + deslocamentoY;
-            car.desenhar((Graphics2D) g2, cx, cy, Circulo.DIAMETRO);
+            car.desenhar((Graphics2D) g2, centroX, centroY, Circulo.DIAMETRO);
         }
-
+        // verifica se o personagem foi instanciado e se está em uma posição válida
         if (cab != null && cabritoPosicao >= 0) {
-            int cx = circulos[cabritoPosicao].getPosicaoX() + Circulo.DIAMETRO / 2
+            // calcula o centro do círculo para desenhar o personagem centralizado
+            int centroX = circulos[cabritoPosicao].getPosicaoX() + Circulo.DIAMETRO / 2
                     + deslocamentoX;
-            int cy = circulos[cabritoPosicao].getPosicaoY() + Circulo.DIAMETRO / 2
+            int centroY = circulos[cabritoPosicao].getPosicaoY() + Circulo.DIAMETRO / 2
                     + deslocamentoY;
-            cab.desenhar((Graphics2D) g2, cx, cy, Circulo.DIAMETRO);
+            cab.desenhar((Graphics2D) g2, centroX, centroY, Circulo.DIAMETRO);
         }
-
+        // verifica se o personagem foi instanciado e se está em uma posição válida
         if (cabAssado != null && cabAssadoPos >= 0) {
-            int cx = circulos[cabAssadoPos].getPosicaoX() + Circulo.DIAMETRO / 2
+            // calcula o centro do círculo para desenhar o personagem centralizado
+            int centroX = circulos[cabAssadoPos].getPosicaoX() + Circulo.DIAMETRO / 2
                     + deslocamentoX;
-            int cy = circulos[cabAssadoPos].getPosicaoY() + Circulo.DIAMETRO / 2
+            int centroY = circulos[cabAssadoPos].getPosicaoY() + Circulo.DIAMETRO / 2
                     + deslocamentoY;
-            cabAssado.desenhar(g2, cx, cy, Circulo.DIAMETRO);
+            cabAssado.desenhar(g2, centroX, centroY, Circulo.DIAMETRO);
         }
 
-        // desenhar contadores no topo central (fora do laço)
+        // desenha os contadores no centro superior
         int larguraFundo = 360;
         int alturaFundo = 48;
         int xFundo = (getWidth() - larguraFundo) / 2;
         int yFundo = 8;
+        // desenha o fundo do contador
         g2.setColor(new Color(0, 0, 0, 160));
         g2.fillRoundRect(xFundo, yFundo, larguraFundo, alturaFundo, 16, 16);
+        // desenha as letras do contador
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("SansSerif", Font.BOLD, 14));
         int xTexto = xFundo + 12;
         g2.drawString("Movimentos Cabrito: " + jogo.getMovimentosCabrito(), xTexto, yFundo + 18);
         g2.drawString("Movimentos Carcará: " + jogo.getMovimentosCarcara(), xTexto, yFundo + 36);
 
-        // desenhar legenda de cores no canto inferior direito
+        // desenha a legenda das cores no canto inferior direito
         int legendaLarg = 260;
         int legendaAlt = 110;
-        int pad = 10;
-        int xLegenda = getWidth() - legendaLarg - pad;
-        int yLegenda = getHeight() - legendaAlt - pad;
+        int margemBorda = 10;
+        // calulam a posição das legendas
+        int xLegenda = getWidth() - legendaLarg - margemBorda;
+        int yLegenda = getHeight() - legendaAlt - margemBorda;
 
+        // desenha o fundo da lagenda
         g2.setColor(new Color(0, 0, 0, 160));
         g2.fillRoundRect(xLegenda, yLegenda, legendaLarg, legendaAlt, 12, 12);
 
+        // desenha as letras no lugar desejado
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        int sw = 14; // square width for color sample
-        int gapY = 20;
-        int textoX = xLegenda + sw + 15;
+        int tamanhoQuadradoCor = 14; 
+        int espacamentoY = 20;
+        int textoX = xLegenda + tamanhoQuadradoCor + 15;
         int linhaY = yLegenda + 20;
 
 
-        // Amarelo: selecionado
-        linhaY += gapY;
+        // desenha o quadrado onde fica a cor de exemplo -> amarelo
+        linhaY += espacamentoY;
         g2.setColor(Color.YELLOW);
-        g2.fillRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+        g2.fillRect(xLegenda + 10, linhaY - tamanhoQuadradoCor + 4, tamanhoQuadradoCor, tamanhoQuadradoCor);
         g2.setColor(Color.BLACK);
-        g2.drawRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+        g2.drawRect(xLegenda + 10, linhaY - tamanhoQuadradoCor + 4, tamanhoQuadradoCor, tamanhoQuadradoCor);
         g2.setColor(Color.WHITE);
         g2.drawString("Amarelo — Personagem Selecionado", textoX, linhaY);
 
-        // Verde: movimento disponível
-        linhaY += gapY;
+        // desenha o quadrado onde fica a cor de exemplo -> verde
+        linhaY += espacamentoY;
         g2.setColor(Color.GREEN);
-        g2.fillRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+        g2.fillRect(xLegenda + 10, linhaY - tamanhoQuadradoCor + 4, tamanhoQuadradoCor, tamanhoQuadradoCor);
         g2.setColor(Color.BLACK);
-        g2.drawRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+        g2.drawRect(xLegenda + 10, linhaY - tamanhoQuadradoCor + 4, tamanhoQuadradoCor, tamanhoQuadradoCor);
         g2.setColor(Color.WHITE);
         g2.drawString("Verde — Movimento Disponível", textoX, linhaY);
 
-        // Vermelho: posição de confronto / captura
-        linhaY += gapY;
+        // desenha o quadrado onde fica a cor de exemplo -> vermelho
+        linhaY += espacamentoY;
         g2.setColor(Color.RED);
-        g2.fillRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+        g2.fillRect(xLegenda + 10, linhaY - tamanhoQuadradoCor + 4, tamanhoQuadradoCor, tamanhoQuadradoCor);
         g2.setColor(Color.BLACK);
-        g2.drawRect(xLegenda + 10, linhaY - sw + 4, sw, sw);
+        g2.drawRect(xLegenda + 10, linhaY - tamanhoQuadradoCor + 4, tamanhoQuadradoCor, tamanhoQuadradoCor);
         g2.setColor(Color.WHITE);
         g2.drawString("Vermelho — Risco de Morrer", textoX, linhaY);
 
-        // legenda do superpulo
-        int padRight = 12;
+        // cálculo da legenda do superpulo
+        int margemDireita = 12;
         int larguraSuper = 180;
         int alturaSuper = 32;
-        int xSuper = getWidth() - larguraSuper - padRight;
+        int xSuper = getWidth() - larguraSuper - margemDireita;
         int ySuper = 12; 
-
+        // desenha o fundo da legenda
         g2.setColor(new Color(0, 0, 0, 160));
         g2.fillRoundRect(xSuper, ySuper, larguraSuper, alturaSuper, 10, 10);
+        // desenha as letras da legenda
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        boolean superPuloDisponivel2 = false;
+        boolean superPuloDisponivel = false;
+        // verifica se o Cabrito existe no jogo e 
+        // chama o método para verificar se o super pulo pode ser utilizado
         if (jogo.getCabrito() != null) {
-            superPuloDisponivel2 = jogo.getCabrito().podeSuperPulo();
+            superPuloDisponivel = jogo.getCabrito().verificarSuperPulo();
         }
-        String textoSuper2 = superPuloDisponivel2 ? "Super pulo: Disponível" : "Super pulo: Indisponível";
-        FontMetrics fm = g2.getFontMetrics();
-        int textWidth = fm.stringWidth(textoSuper2);
+        // verifica se super pulo está disponível para definir a legenda
+        String textoSuper = superPuloDisponivel ? "Super pulo: Disponível" : "Super pulo: Indisponível";
+        FontMetrics metricasFonte = g2.getFontMetrics();
+        int textWidth = metricasFonte.stringWidth(textoSuper);
         int textX = xSuper + 12;
-        int textY = ySuper + (alturaSuper + fm.getAscent()) / 2 - 4;
-        g2.drawString(textoSuper2, textX, textY);
+        // garante que a legenda esteja desenhada no centro do fundo dela
+        int textY = ySuper + (alturaSuper + metricasFonte.getAscent()) / 2 - 4;
+        g2.drawString(textoSuper, textX, textY);
     }
 }
