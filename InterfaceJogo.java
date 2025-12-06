@@ -82,7 +82,7 @@ public class InterfaceJogo extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e){
                 // cria uma janela de mensagem e exibe a String autores
-                String autores = "Autores:\n- Mariana Ferrao Chuquel\n- Rafaela de Menezes";
+                String autores = "Autores:\n- Mariana Ferrão Chuquel\n- Rafaela de Menezes";
                 JOptionPane.showMessageDialog(InterfaceJogo.this, autores, "Autoria", JOptionPane.INFORMATION_MESSAGE);
             }
         });
